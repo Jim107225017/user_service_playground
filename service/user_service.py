@@ -1,22 +1,16 @@
-from concurrent import futures
-from mongoengine.errors import ValidationError, NotUniqueError
-from datetime import datetime, timedelta
-from calendar import timegm
-from hashlib import pbkdf2_hmac
 import grpc
 import hmac
-import os
 import jwt
-import sys
-sys.path.insert(0, "../protos")
-sys.path.insert(0, "../models")
+import os
+from calendar import timegm
+from datetime import datetime, timedelta
+from hashlib import pbkdf2_hmac
+from mongoengine.errors import ValidationError, NotUniqueError
 
-import user_pb2_grpc
-from user_pb2 import UserResponse
-from user_model import User
-from validator import NameValidator, PasswordValidator
-
-
+from models.user_model import User
+from pypb2 import user_pb2_grpc
+from pypb2.user_pb2 import UserResponse
+from utils.validator import NameValidator, PasswordValidator
 
 class UserService(user_pb2_grpc.UserServiceServicer):
 
@@ -119,15 +113,3 @@ class UserService(user_pb2_grpc.UserServiceServicer):
     def hash_comparator(self, password: str, salt: str, db_hash_password: str) -> bool:
         input_hash_password = self.hash_generator(password, salt)
         return hmac.compare_digest(input_hash_password, db_hash_password)
-
-def serve():
-    thread_pool = futures.ThreadPoolExecutor(max_workers=10)
-    server = grpc.server(thread_pool=thread_pool)
-    user_pb2_grpc.add_UserServiceServicer_to_server(UserService(), server)
-    server.add_insecure_port('[::]:50051')
-    server.start()
-    server.wait_for_termination()
-
-
-if __name__ == '__main__':
-    serve()
