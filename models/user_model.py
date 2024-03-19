@@ -1,8 +1,15 @@
+import os
 from mongoengine import Document, StringField, connect
 
 # Connect to MongoDB
+MONGO_HOST = os.environ.get("MONGO_HOST")
+MONGO_PORT = 27017
+connect_setting = {
+    "host": MONGO_HOST,
+    "port": MONGO_PORT
+}
 MONGO_DB = "user_service_playground"
-client = connect(db=MONGO_DB)
+client = connect(db=MONGO_DB, **connect_setting)
 
 
 class User(Document):
