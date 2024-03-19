@@ -1,13 +1,13 @@
 FROM python:3.12.2-slim
 
-ENV BASE_PATH /server
+COPY . /src
 
-COPY . .
+WORKDIR /src
 
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt && \
     rm -rf requirements.txt
 
-WORKDIR ${BASE_PATH}
+RUN python run_codegen.py
 
-CMD ["python", "server.py"]
+CMD ["python", "main.py"]
