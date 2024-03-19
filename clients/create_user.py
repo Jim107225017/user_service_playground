@@ -1,9 +1,9 @@
 import grpc
-import sys
-sys.path.insert(0, "../protos")
 
-import user_pb2_grpc
-from user_pb2 import CreateUserRequest
+from pypb2 import user_pb2_grpc
+from pypb2.user_pb2 import CreateUserRequest
+
+
 
 def create_user_success(channel: grpc.Channel):
     name = "Jim Chen"
